@@ -318,7 +318,7 @@ try:
         # 3. 지식 그래프 (그 아래에 가로로 꽉 차게)
         st.markdown("### 🕸️ Knowledge Graph Topology")
             
-        net = Network(height='700px', width='100%', bgcolor='#f8fafc', font_color='#0f172a')
+        net = Network(height='500px', width='100%', bgcolor='#f8fafc', font_color='#0f172a')
         # 물리 엔진 부드럽게 조정
         net.repulsion(node_distance=150, spring_length=200)
         
@@ -350,7 +350,7 @@ try:
 
         net.save_graph('temp_graph.html')
         with open('temp_graph.html', 'r', encoding='utf-8') as f:
-            components.html(f.read(), height=720)
+            components.html(f.read(), height=520)
 
 except Exception as e:
     st.error(f"데이터 처리 중 오류가 발생했습니다: {e}")
