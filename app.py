@@ -154,6 +154,7 @@ try:
         placeholder="현장 상황을 자유롭게 입력하세요. (예: 도심지 갱구부에서 굴착 중 파쇄대 조우 시 대책)",
         height=120
     )
+    go_clicked = st.sidebar.button("🚀 GO (분석 실행)", use_container_width=True)
     
     risk_scores = defaultdict(float)
     risk_matches = defaultdict(list)
@@ -231,57 +232,71 @@ try:
         
         st.markdown("<br>", unsafe_allow_html=True)
         
-        # UI 레이아웃 2단 분리 (좌: 리스크 리포트 / 우: 지식 그래프)
-        col_left, col_right = st.columns([1, 1.2], gap="large")
+        # 1. AI 답변 요약 (새로 추가)
+        st.markdown("### 💡 AI 분석 요약")
+        summary_tags = set()
+        for matches in risk_matches.values():
+            for m in matches:
+                summary_tags.add(m)
         
-        with col_left:
-            st.markdown("### 📄 Risk Intelligence Report")
-            
-            if perfect_matches:
-                for r_id, score in perfect_matches[:10]:
-                    r_desc = df_risk[df_risk['id:ID'] == r_id]['description'].values[0]
-                    matched_tags = " | ".join(risk_matches[r_id])
-                    
-                    st.markdown(f'''
-                        <div class="core-risk-box">
-                            <div class="core-risk-title">🚨 {r_desc}</div>
-                            <div class="core-risk-desc">매칭 근거: {matched_tags}</div>
-                        </div>
-                    ''', unsafe_allow_html=True)
-                    
-                    with st.expander("🛠️ 현장 설계 및 시공 대책 보기"):
-                        strat_ids = df_rels[(df_rels[':START_ID'] == r_id) & (df_rels[':TYPE'] == 'MITIGATED_BY')][':END_ID'].tolist()
-                        strats = df_strat[df_strat['id:ID'].isin(strat_ids)]['action'].tolist()
-                        if strats:
-                            for s in strats:
-                                st.markdown(f"- {s}")
-                        else:
-                            st.write("등록된 세부 대책 데이터가 없습니다.")
-            
-            if partial_matches:
-                st.markdown("<br>#### ⚠️ 참고 위험 요소 (Partial Match)", unsafe_allow_html=True)
-                for r_id, score in partial_matches[:5]:
-                    r_desc = df_risk[df_risk['id:ID'] == r_id]['description'].values[0]
-                    matched_tags = " | ".join(risk_matches[r_id])
-                    
-                    st.markdown(f'''
-                        <div class="partial-risk-box">
-                            <div class="partial-risk-title">🔸 {r_desc}</div>
-                            <div style="color: #64748b; font-size: 0.85rem;">매칭 근거: {matched_tags}</div>
-                        </div>
-                    ''', unsafe_allow_html=True)
-                    
-                    with st.expander("세부 대책 보기"):
-                        strat_ids = df_rels[(df_rels[':START_ID'] == r_id) & (df_rels[':TYPE'] == 'MITIGATED_BY')][':END_ID'].tolist()
-                        strats = df_strat[df_strat['id:ID'].isin(strat_ids)]['action'].tolist()
-                        if strats:
-                            for s in strats:
-                                st.markdown(f"- {s}")
-                        else:
-                            st.write("등록된 세부 대책 데이터가 없습니다.")
+        if summary_tags:
+            tag_str = ", ".join([f"**[{t}]**" for t in summary_tags])
+            st.info(f"입력하신 현장 조건 및 텍스트에서 {tag_str} 키워드가 식별되었습니다. 이를 바탕으로 총 **{len(sorted_risks)}건**의 잠재적 위험 요소가 분석되었으며, 특히 **{len(perfect_matches)}건**의 핵심 위험에 대한 우선적인 대비가 권장됩니다.")
+        else:
+            st.info(f"분석 결과 총 **{len(sorted_risks)}건**의 잠재적 위험 요소가 식별되었습니다.")
+        
+        st.markdown("<br>", unsafe_allow_html=True)
 
-        with col_right:
-            st.markdown("### 🕸️ Knowledge Graph Topology")
+        # 2. Risk Intelligence Report (가로로 꽉 차게)
+        st.markdown("### 📄 Risk Intelligence Report")
+        
+        if perfect_matches:
+            for r_id, score in perfect_matches[:10]:
+                r_desc = df_risk[df_risk['id:ID'] == r_id]['description'].values[0]
+                matched_tags = " | ".join(risk_matches[r_id])
+                
+                st.markdown(f'''
+                    <div class="core-risk-box" style="width: 100%;">
+                        <div class="core-risk-title">🚨 {r_desc}</div>
+                        <div class="core-risk-desc">매칭 근거: {matched_tags}</div>
+                    </div>
+                ''', unsafe_allow_html=True)
+                
+                with st.expander("🛠️ 현장 설계 및 시공 대책 보기"):
+                    strat_ids = df_rels[(df_rels[':START_ID'] == r_id) & (df_rels[':TYPE'] == 'MITIGATED_BY')][':END_ID'].tolist()
+                    strats = df_strat[df_strat['id:ID'].isin(strat_ids)]['action'].tolist()
+                    if strats:
+                        for s in strats:
+                            st.markdown(f"- {s}")
+                    else:
+                        st.write("등록된 세부 대책 데이터가 없습니다.")
+        
+        if partial_matches:
+            st.markdown("<br>#### ⚠️ 참고 위험 요소 (Partial Match)", unsafe_allow_html=True)
+            for r_id, score in partial_matches[:5]:
+                r_desc = df_risk[df_risk['id:ID'] == r_id]['description'].values[0]
+                matched_tags = " | ".join(risk_matches[r_id])
+                
+                st.markdown(f'''
+                    <div class="partial-risk-box" style="width: 100%;">
+                        <div class="partial-risk-title">🔸 {r_desc}</div>
+                        <div style="color: #64748b; font-size: 0.85rem;">매칭 근거: {matched_tags}</div>
+                    </div>
+                ''', unsafe_allow_html=True)
+                
+                with st.expander("세부 대책 보기"):
+                    strat_ids = df_rels[(df_rels[':START_ID'] == r_id) & (df_rels[':TYPE'] == 'MITIGATED_BY')][':END_ID'].tolist()
+                    strats = df_strat[df_strat['id:ID'].isin(strat_ids)]['action'].tolist()
+                    if strats:
+                        for s in strats:
+                            st.markdown(f"- {s}")
+                    else:
+                        st.write("등록된 세부 대책 데이터가 없습니다.")
+
+        st.markdown("<br><hr><br>", unsafe_allow_html=True)
+
+        # 3. 지식 그래프 (그 아래에 가로로 꽉 차게)
+        st.markdown("### 🕸️ Knowledge Graph Topology")
             
             net = Network(height='700px', width='100%', bgcolor='#f8fafc', font_color='#0f172a')
             # 물리 엔진 부드럽게 조정
