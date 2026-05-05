@@ -166,7 +166,7 @@ try:
         
     st.markdown("---")
     
-    risk_scores = defaultdict(float)
+    risk_scores = defaultdict(lambda: 1.0)
     risk_matches = defaultdict(list)
     target_nodes = {}
     
@@ -174,8 +174,11 @@ try:
         if node_id not in target_nodes:
             target_nodes[node_id] = (node_label, color)
             r_ids = df_rels[(df_rels[':START_ID'] == node_id) & (df_rels[':TYPE'] == rel_type)][':END_ID'].tolist()
+            degree = len(r_ids)
+            if degree == 0:
+                degree = 1
             for r_id in r_ids:
-                risk_scores[r_id] += 1.0
+                risk_scores[r_id] *= degree
                 if node_label not in risk_matches[r_id]:
                     risk_matches[r_id].append(node_label)
                     
@@ -221,7 +224,7 @@ try:
             desc = row['description']
             for qw in query_words:
                 if qw in desc:
-                    risk_scores[r_id] += 0.5
+                    risk_scores[r_id] *= 2.0
                     if "자연어 내용 매칭" not in risk_matches[r_id]:
                         risk_matches[r_id].append("자연어 내용 매칭")
 
@@ -231,16 +234,28 @@ try:
         sorted_risks = sorted(risk_scores.items(), key=lambda x: x[1], reverse=True)
         max_score = sorted_risks[0][1] if sorted_risks else 0
         
-        perfect_matches = [(r_id, s) for r_id, s in sorted_risks if s == max_score]
-        partial_matches = [(r_id, s) for r_id, s in sorted_risks if s < max_score]
+        total_risks = len(sorted_risks)
+        risk_levels = {}
+        for idx, (r_id, s) in enumerate(sorted_risks):
+            percentile = (idx + 1) / total_risks
+            if percentile <= 0.05:
+                risk_levels[r_id] = ("최상위 위험", "#ef4444")  # Red
+            elif percentile <= 0.20:
+                risk_levels[r_id] = ("상위 위험", "#f97316")  # Orange
+            elif percentile <= 0.50:
+                risk_levels[r_id] = ("중위험", "#eab308")     # Yellow
+            else:
+                risk_levels[r_id] = ("저위험", "#22c55e")     # Green
+                
+        critical_count = sum(1 for l, c in risk_levels.values() if l == "최상위 위험")
         
         # 대시보드 메트릭 출력
         col1, col2, col3 = st.columns(3)
-        col1.metric("총 식별된 위험 요소 (Risks Found)", f"{len(sorted_risks)} 건")
-        col2.metric("최상위 핵심 위험 (Critical)", f"{len(perfect_matches)} 건")
-        col3.metric("최고 위험도 스코어 (Max Risk Score)", f"{max_score} 점")
+        col1.metric("총 식별된 위험 요소 (Risks Found)", f"{total_risks} 건")
+        col2.metric("최상위 핵심 위험 (Critical)", f"{critical_count} 건")
+        col3.metric("최고 위험도 스코어 (Max Risk Score)", f"{max_score:,.1f} 점")
         
-        st.caption("ℹ️ **최고 위험도 스코어란?** 선택한 현장 조건 및 검색 키워드와의 최대 일치(중복) 건수를 의미합니다. *(ex. 현장조건 1개 일치 = +1.0점, 자연어 키워드 1개 포함 = +0.5점)* 🚀 **[추후 업데이트 예정]** 정량적 위험도 산출 기능 (Risk = 빈도 × 강도) 탑재 예정")
+        st.caption("ℹ️ **최고 위험도 스코어란?** 선택한 조건들이 가지고 있는 과거 리스크 발생 건수(빈도)를 조합하여 산출한 정량적 위험도입니다. *(상위 5%: 최상위, 20%: 상위, 50%: 중위험)*")
         
         st.markdown("<br>", unsafe_allow_html=True)
         
@@ -253,69 +268,50 @@ try:
         
         if summary_tags:
             tag_str = ", ".join([f"**[{t}]**" for t in summary_tags])
-            st.info(f"입력하신 현장 조건 및 텍스트에서 {tag_str} 키워드가 식별되었습니다. 이를 바탕으로 총 **{len(sorted_risks)}건**의 잠재적 위험 요소가 분석되었으며, 특히 **{len(perfect_matches)}건**의 핵심 위험에 대한 우선적인 대비가 권장됩니다.")
+            st.info(f"입력하신 현장 조건 및 텍스트에서 {tag_str} 키워드가 식별되었습니다. 이를 바탕으로 총 **{total_risks}건**의 잠재적 위험 요소가 분석되었으며, 특히 **{critical_count}건**의 최상위 핵심 위험에 대한 우선적인 대비가 권장됩니다.")
         else:
-            st.info(f"분석 결과 총 **{len(sorted_risks)}건**의 잠재적 위험 요소가 식별되었습니다.")
+            st.info(f"분석 결과 총 **{total_risks}건**의 잠재적 위험 요소가 식별되었습니다.")
         
         st.markdown("<br>", unsafe_allow_html=True)
 
         # 2. Risk Intelligence Report (가로로 꽉 차게)
         st.markdown("### 📄 Risk Intelligence Report")
         
-        if perfect_matches:
-            for r_id, score in perfect_matches[:10]:
-                r_desc = df_risk[df_risk['id:ID'] == r_id]['description'].values[0]
-                matched_tags = " | ".join(risk_matches[r_id])
+        for r_id, score in sorted_risks[:15]:
+            r_desc = df_risk[df_risk['id:ID'] == r_id]['description'].values[0]
+            matched_tags = " | ".join(risk_matches[r_id])
+            
+            level_text, level_color = risk_levels[r_id]
+            if level_text == "최상위 위험":
+                icon = "🚨"
+            elif level_text == "상위 위험":
+                icon = "🔸"
+            elif level_text == "중위험":
+                icon = "⚡"
+            else:
+                icon = "✅"
                 
-                st.markdown(f'''
-                    <div class="core-risk-box" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-                        <div style="flex: 1; padding-right: 20px;">
-                            <div class="core-risk-title" style="margin-bottom: 6px;">🚨 {r_desc}</div>
-                            <div class="core-risk-desc" style="margin: 0;">매칭 근거: {matched_tags}</div>
-                        </div>
-                        <div style="flex-shrink: 0; text-align: center; background: white; padding: 8px 16px; border-radius: 8px; border: 2px solid #e11d48; box-shadow: 0 2px 4px rgba(225,29,72,0.1);">
-                            <div style="font-size: 0.7rem; color: #e11d48; font-weight: 800; letter-spacing: 0.5px;">RISK SCORE</div>
-                            <div style="font-size: 1.4rem; color: #e11d48; font-weight: 900; line-height: 1.2;">{score}</div>
-                        </div>
+            st.markdown(f'''
+                <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 12px; padding: 16px; background-color: white; border-left: 6px solid {level_color}; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                    <div style="flex: 1; padding-right: 20px;">
+                        <div style="font-size: 1.1rem; font-weight: 700; color: #1e293b; margin-bottom: 6px;">{icon} [{level_text}] {r_desc}</div>
+                        <div style="color: #64748b; font-size: 0.85rem; margin: 0;">매칭 근거: {matched_tags}</div>
                     </div>
-                ''', unsafe_allow_html=True)
-                
-                with st.expander("🛠️ 현장 설계 및 시공 대책 보기"):
-                    strat_ids = df_rels[(df_rels[':START_ID'] == r_id) & (df_rels[':TYPE'] == 'MITIGATED_BY')][':END_ID'].tolist()
-                    strats = df_strat[df_strat['id:ID'].isin(strat_ids)]['action'].tolist()
-                    if strats:
-                        for s in strats:
-                            st.markdown(f"- {s}")
-                    else:
-                        st.write("등록된 세부 대책 데이터가 없습니다.")
-        
-        if partial_matches:
-            st.markdown("<br>#### ⚠️ 참고 위험 요소 (Partial Match)", unsafe_allow_html=True)
-            for r_id, score in partial_matches[:5]:
-                r_desc = df_risk[df_risk['id:ID'] == r_id]['description'].values[0]
-                matched_tags = " | ".join(risk_matches[r_id])
-                
-                st.markdown(f'''
-                    <div class="partial-risk-box" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-                        <div style="flex: 1; padding-right: 20px;">
-                            <div class="partial-risk-title" style="margin-bottom: 4px;">🔸 {r_desc}</div>
-                            <div style="color: #64748b; font-size: 0.85rem; margin: 0;">매칭 근거: {matched_tags}</div>
-                        </div>
-                        <div style="flex-shrink: 0; text-align: center; background: white; padding: 6px 12px; border-radius: 6px; border: 1px solid #ea580c;">
-                            <div style="font-size: 0.65rem; color: #ea580c; font-weight: 700; letter-spacing: 0.5px;">SCORE</div>
-                            <div style="font-size: 1.1rem; color: #ea580c; font-weight: 800; line-height: 1.2;">{score}</div>
-                        </div>
+                    <div style="flex-shrink: 0; text-align: center; background: white; padding: 8px 16px; border-radius: 8px; border: 2px solid {level_color};">
+                        <div style="font-size: 0.7rem; color: {level_color}; font-weight: 800; letter-spacing: 0.5px;">RISK SCORE</div>
+                        <div style="font-size: 1.4rem; color: {level_color}; font-weight: 900; line-height: 1.2;">{score:,.1f}</div>
                     </div>
-                ''', unsafe_allow_html=True)
-                
-                with st.expander("세부 대책 보기"):
-                    strat_ids = df_rels[(df_rels[':START_ID'] == r_id) & (df_rels[':TYPE'] == 'MITIGATED_BY')][':END_ID'].tolist()
-                    strats = df_strat[df_strat['id:ID'].isin(strat_ids)]['action'].tolist()
-                    if strats:
-                        for s in strats:
-                            st.markdown(f"- {s}")
-                    else:
-                        st.write("등록된 세부 대책 데이터가 없습니다.")
+                </div>
+            ''', unsafe_allow_html=True)
+            
+            with st.expander("🛠️ 현장 설계 및 시공 대책 보기"):
+                strat_ids = df_rels[(df_rels[':START_ID'] == r_id) & (df_rels[':TYPE'] == 'MITIGATED_BY')][':END_ID'].tolist()
+                strats = df_strat[df_strat['id:ID'].isin(strat_ids)]['action'].tolist()
+                if strats:
+                    for s in strats:
+                        st.markdown(f"- {s}")
+                else:
+                    st.write("등록된 세부 대책 데이터가 없습니다.")
 
         st.markdown("<br><hr><br>", unsafe_allow_html=True)
 
@@ -331,18 +327,21 @@ try:
         
         for r_id, score in sorted_risks[:10]:
             r_desc = df_risk[df_risk['id:ID'] == r_id]['description'].values[0]
+            level_text, level_color = risk_levels[r_id]
             
-            if score == max_score:
-                net.add_node(r_id, label="Critical Risk", title=r_desc, color='#e11d48', size=45)
+            is_critical = (level_text == "최상위 위험")
+            
+            if is_critical:
+                net.add_node(r_id, label="Critical Risk", title=r_desc, color=level_color, size=45)
             else:
-                net.add_node(r_id, label="Risk", title=r_desc, color='#cbd5e1', size=25)
+                net.add_node(r_id, label="Risk", title=r_desc, color=level_color, size=25)
             
             for t_id, (t_label, _) in target_nodes.items():
                 if t_label in risk_matches[r_id]:
-                    edge_width = 4 if score == max_score else 1
+                    edge_width = 4 if is_critical else 1
                     net.add_edge(t_id, r_id, title="RELATES_TO", width=edge_width, color='#94a3b8')
                 
-            if score == max_score:
+            if is_critical:
                 strat_ids = df_rels[(df_rels[':START_ID'] == r_id) & (df_rels[':TYPE'] == 'MITIGATED_BY')][':END_ID'].tolist()
                 for s_id in strat_ids[:2]: 
                     s_label = df_strat[df_strat['id:ID'] == s_id]['action'].values[0]
