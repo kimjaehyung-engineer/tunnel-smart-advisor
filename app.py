@@ -98,6 +98,18 @@ def inject_custom_css():
             margin-bottom: 0.4rem;
         }
         
+        /* 입력창(Selectbox, Textarea) 내부 텍스트 강제 검은색 지정 */
+        div[data-baseweb="select"] * {
+            color: #0f172a !important;
+        }
+        div[role="listbox"] * {
+            color: #0f172a !important;
+        }
+        textarea {
+            color: #0f172a !important;
+            background-color: #ffffff !important;
+        }
+        
         </style>
     """, unsafe_allow_html=True)
 
