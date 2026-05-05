@@ -238,11 +238,9 @@ try:
         col1, col2, col3 = st.columns(3)
         col1.metric("총 식별된 위험 요소 (Risks Found)", f"{len(sorted_risks)} 건")
         col2.metric("최상위 핵심 위험 (Critical)", f"{len(perfect_matches)} 건")
-        col3.metric(
-            "최고 위험도 스코어 (Max Risk Score)", 
-            f"{max_score} 점", 
-            help="선택한 현장 조건 및 검색 키워드와 얼마나 많이 일치(중복)하는지를 나타내는 지표입니다. 점수가 높을수록 현재 상황과 가장 강하게 연관된 위험 요소임을 의미합니다."
-        )
+        col3.metric("최고 위험도 스코어 (Max Risk Score)", f"{max_score} 점")
+        
+        st.caption("ℹ️ **최고 위험도 스코어란?** 선택한 현장 조건 및 검색 키워드와의 최대 일치(중복) 건수를 의미합니다. 점수가 높을수록 현재 현장 상황에 가장 부합하는 핵심 위험 요소입니다.")
         
         st.markdown("<br>", unsafe_allow_html=True)
         
