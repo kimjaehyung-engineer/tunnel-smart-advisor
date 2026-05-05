@@ -219,6 +219,33 @@ try:
                     apply_filter(row['id:ID'], name, '#8b5cf6', 'OCCURS_AT')
                     break
                     
+        for _, row in df_method.dropna(subset=['method_name']).iterrows():
+            name = row['method_name']
+            clean = re.sub(r'^\d+\.\s*', '', name)
+            for cw in clean.split():
+                if len(cw) >= 2 and cw in user_query:
+                    apply_filter(row['id:ID'], name, '#8b5cf6', 'ASSOCIATED_WITH')
+                    break
+                    
+        for _, row in df_equip.dropna(subset=['equip_name']).iterrows():
+            name = row['equip_name']
+            clean = re.sub(r'^\d+\.\s*', '', name)
+            for cw in clean.split():
+                if len(cw) >= 2 and cw in user_query:
+                    eq_id = row['id:ID']
+                    if eq_id not in target_nodes:
+                        target_nodes[eq_id] = (name, '#8b5cf6')
+                        strat_ids = df_rels[(df_rels[':END_ID'] == eq_id) & (df_rels[':TYPE'] == 'REQUIRES')][':START_ID'].tolist()
+                        strat_ids = [s for s in strat_ids if s.startswith('Strat')]
+                        for s_id in strat_ids:
+                            r_ids = df_rels[(df_rels[':END_ID'] == s_id) & (df_rels[':TYPE'] == 'MITIGATED_BY')][':START_ID'].tolist()
+                            degree = len(r_ids) if len(r_ids) > 0 else 1
+                            for r_id in r_ids:
+                                risk_scores[r_id] *= degree
+                                if name not in risk_matches[r_id]:
+                                    risk_matches[r_id].append(name)
+                    break
+                    
         for _, row in df_risk.dropna(subset=['description']).iterrows():
             r_id = row['id:ID']
             desc = row['description']
