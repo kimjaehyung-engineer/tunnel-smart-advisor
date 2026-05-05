@@ -46,43 +46,6 @@ def inject_custom_css():
             font-weight: 400;
         }
         
-        /* 사이드바 프리미엄 다크 모드 */
-        [data-testid="stSidebar"] {
-            background-color: #0f172a;
-            border-right: 1px solid #1e293b;
-        }
-        [data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2, [data-testid="stSidebar"] h3, [data-testid="stSidebar"] p, [data-testid="stSidebar"] label {
-            color: #f8fafc !important;
-        }
-        
-        /* 사이드바 드롭다운/입력창 배경 및 텍스트 강제 지정 */
-        [data-testid="stSidebar"] div[data-baseweb="select"] > div {
-            background-color: #1e293b !important;
-            border-color: #334155 !important;
-        }
-        [data-testid="stSidebar"] div[data-baseweb="select"] span {
-            color: #f8fafc !important;
-        }
-        /* 드롭다운 클릭 시 뜨는 리스트 메뉴 색상 복구 */
-        ul[role="listbox"] {
-            background-color: #ffffff !important;
-        }
-        ul[role="listbox"] li {
-            color: #0f172a !important;
-        }
-        
-        /* 텍스트 영역 */
-        [data-testid="stSidebar"] textarea {
-            background-color: #1e293b !important;
-            color: #f8fafc !important;
-            border: 1px solid #334155 !important;
-        }
-        
-        /* 사이드바 구분선 */
-        hr {
-            border-color: #334155 !important;
-        }
-        
         /* 메트릭(통계) 카드 디자인 */
         [data-testid="stMetric"] {
             background-color: #ffffff;
