@@ -147,15 +147,21 @@ try:
     proc_names = sorted(df_proc['name'].dropna().tolist(), key=natural_sort_key)
     ground_names = sorted(df_ground['condition_name'].dropna().tolist(), key=natural_sort_key)
     loc_names = sorted(df_loc['loc_name'].dropna().tolist(), key=natural_sort_key)
+    method_names = sorted(df_method['method_name'].dropna().tolist(), key=natural_sort_key)
+    equip_names = sorted(df_equip['equip_name'].dropna().tolist(), key=natural_sort_key)
     
     with st.container():
         st.markdown("### 🔍 AI 현장 조건 및 텍스트 분석기")
         
-        # 데스크톱에서는 3단 가로 배치, 모바일에서는 자동 세로 배치
+        # 데스크톱에서는 가로 배치, 모바일에서는 자동 세로 배치
         col_cond1, col_cond2, col_cond3 = st.columns(3)
         sel_proc = col_cond1.selectbox("1. Process (공종)", ["[상관없음/전체]"] + proc_names)
         sel_ground = col_cond2.selectbox("2. Ground (지반)", ["[상관없음/전체]"] + ground_names)
         sel_loc = col_cond3.selectbox("3. Location (위치)", ["[상관없음/전체]"] + loc_names)
+        
+        col_cond4, col_cond5 = st.columns(2)
+        sel_method = col_cond4.selectbox("4. Method (공법)", ["[상관없음/전체]"] + method_names)
+        sel_equip = col_cond5.selectbox("5. Equipment (장비)", ["[상관없음/전체]"] + equip_names)
         
         user_query = st.text_area(
             "💬 Semantic Search (자유 형식 자연어 검색)", 
@@ -194,6 +200,24 @@ try:
     if sel_loc != "[상관없음/전체]":
         l_id = df_loc[df_loc['loc_name'] == sel_loc]['id:ID'].values[0]
         apply_filter(l_id, sel_loc, '#3b82f6', 'OCCURS_AT')
+        
+    if sel_method != "[상관없음/전체]":
+        m_id = df_method[df_method['method_name'] == sel_method]['id:ID'].values[0]
+        apply_filter(m_id, sel_method, '#3b82f6', 'ASSOCIATED_WITH')
+        
+    if sel_equip != "[상관없음/전체]":
+        eq_id = df_equip[df_equip['equip_name'] == sel_equip]['id:ID'].values[0]
+        if eq_id not in target_nodes:
+            target_nodes[eq_id] = (sel_equip, '#3b82f6')
+            strat_ids = df_rels[(df_rels[':END_ID'] == eq_id) & (df_rels[':TYPE'] == 'REQUIRES')][':START_ID'].tolist()
+            strat_ids = [s for s in strat_ids if s.startswith('Strat')]
+            for s_id in strat_ids:
+                r_ids = df_rels[(df_rels[':END_ID'] == s_id) & (df_rels[':TYPE'] == 'MITIGATED_BY')][':START_ID'].tolist()
+                degree = len(r_ids) if len(r_ids) > 0 else 1
+                for r_id in r_ids:
+                    risk_scores[r_id] *= degree
+                    if sel_equip not in risk_matches[r_id]:
+                        risk_matches[r_id].append(sel_equip)
 
     # 자연어 필터 적용
     if user_query:
