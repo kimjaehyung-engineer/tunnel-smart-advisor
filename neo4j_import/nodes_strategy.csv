@@ -1,0 +1,11 @@
+﻿id:ID,action,:LABEL
+Strat_1,기존 운행선 인접공사 견적 시 할증 반영 및 세부 시공계획 검토,HedgeStrategy
+Strat_2,일일투자분석 시행으로 적자여부 확인 및 초기대응 실시,HedgeStrategy
+Strat_3,지질 및 터널 전문가 배치를 통한 상세 공사관리,HedgeStrategy
+Strat_4,U-type 구조물로 공법 변경하여 안전성 확보 및 공기 단축,HedgeStrategy
+Strat_5,P6 활용한 공정계획 Baseline 준수여부 일일확인,HedgeStrategy
+Strat_6,정밀 안전진단 및 자문의견 수렴 후 통과공법 변경,HedgeStrategy
+Strat_7,서해선 사업 시공사 공동대응 및 선제적 클레임,HedgeStrategy
+Strat_8,안정성 확보 용역 수행 및 보강 방안 수립,HedgeStrategy
+Strat_9,V-BEAM 대신 IT & IPC Girder 공법으로 설계변경 추진,HedgeStrategy
+Strat_10,외부전문가 검증을 통한 설계변경 타당성 확보 및 총사업비 증액,HedgeStrategy

@@ -1,0 +1,8 @@
+﻿id:ID,name,:LABEL
+Proc_001,1. 공통 가설 및 인허가,Process
+Proc_002,2. 갱구부 및 사면 보강공,Process
+Proc_003,7. 터널 부대공 및 기타,Process
+Proc_004,3. 터널 본선 굴착공,Process
+Proc_005,4. 터널 지보 및 지반 보강,Process
+Proc_006,5. 터널 방수 및 배수,Process
+Proc_007,6. 구조물 공사,Process

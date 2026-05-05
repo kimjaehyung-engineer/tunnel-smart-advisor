@@ -1,0 +1,6 @@
+﻿id:ID,role_name,:LABEL
+ROLE_001,시공사,Role
+ROLE_002,발주처,Role
+ROLE_003,유관기관,Role
+ROLE_004,민원인,Role
+ROLE_005,감리단,Role
