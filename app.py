@@ -298,36 +298,36 @@ try:
         # 3. 지식 그래프 (그 아래에 가로로 꽉 차게)
         st.markdown("### 🕸️ Knowledge Graph Topology")
             
-            net = Network(height='700px', width='100%', bgcolor='#f8fafc', font_color='#0f172a')
-            # 물리 엔진 부드럽게 조정
-            net.repulsion(node_distance=150, spring_length=200)
+        net = Network(height='700px', width='100%', bgcolor='#f8fafc', font_color='#0f172a')
+        # 물리 엔진 부드럽게 조정
+        net.repulsion(node_distance=150, spring_length=200)
+        
+        for t_id, (t_label, t_color) in target_nodes.items():
+            net.add_node(t_id, label="Condition", title=t_label, color=t_color, size=35)
+        
+        for r_id, score in sorted_risks[:10]:
+            r_desc = df_risk[df_risk['id:ID'] == r_id]['description'].values[0]
             
-            for t_id, (t_label, t_color) in target_nodes.items():
-                net.add_node(t_id, label="Condition", title=t_label, color=t_color, size=35)
+            if score == max_score:
+                net.add_node(r_id, label="Critical Risk", title=r_desc, color='#e11d48', size=45)
+            else:
+                net.add_node(r_id, label="Risk", title=r_desc, color='#cbd5e1', size=25)
             
-            for r_id, score in sorted_risks[:10]:
-                r_desc = df_risk[df_risk['id:ID'] == r_id]['description'].values[0]
+            for t_id, (t_label, _) in target_nodes.items():
+                if t_label in risk_matches[r_id]:
+                    edge_width = 4 if score == max_score else 1
+                    net.add_edge(t_id, r_id, title="RELATES_TO", width=edge_width, color='#94a3b8')
                 
-                if score == max_score:
-                    net.add_node(r_id, label="Critical Risk", title=r_desc, color='#e11d48', size=45)
-                else:
-                    net.add_node(r_id, label="Risk", title=r_desc, color='#cbd5e1', size=25)
-                
-                for t_id, (t_label, _) in target_nodes.items():
-                    if t_label in risk_matches[r_id]:
-                        edge_width = 4 if score == max_score else 1
-                        net.add_edge(t_id, r_id, title="RELATES_TO", width=edge_width, color='#94a3b8')
-                    
-                if score == max_score:
-                    strat_ids = df_rels[(df_rels[':START_ID'] == r_id) & (df_rels[':TYPE'] == 'MITIGATED_BY')][':END_ID'].tolist()
-                    for s_id in strat_ids[:2]: 
-                        s_label = df_strat[df_strat['id:ID'] == s_id]['action'].values[0]
-                        net.add_node(s_id, label="Strategy", title=s_label, color='#10b981', size=20)
-                        net.add_edge(r_id, s_id, title="MITIGATED", color='#6ee7b7')
+            if score == max_score:
+                strat_ids = df_rels[(df_rels[':START_ID'] == r_id) & (df_rels[':TYPE'] == 'MITIGATED_BY')][':END_ID'].tolist()
+                for s_id in strat_ids[:2]: 
+                    s_label = df_strat[df_strat['id:ID'] == s_id]['action'].values[0]
+                    net.add_node(s_id, label="Strategy", title=s_label, color='#10b981', size=20)
+                    net.add_edge(r_id, s_id, title="MITIGATED", color='#6ee7b7')
 
-            net.save_graph('temp_graph.html')
-            with open('temp_graph.html', 'r', encoding='utf-8') as f:
-                components.html(f.read(), height=720)
+        net.save_graph('temp_graph.html')
+        with open('temp_graph.html', 'r', encoding='utf-8') as f:
+            components.html(f.read(), height=720)
 
 except Exception as e:
     st.error(f"데이터 처리 중 오류가 발생했습니다: {e}")
