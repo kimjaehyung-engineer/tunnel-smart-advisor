@@ -153,15 +153,13 @@ try:
     with st.container():
         st.markdown("### 🔍 AI 현장 조건 및 텍스트 분석기")
         
-        # 데스크톱에서는 가로 배치, 모바일에서는 자동 세로 배치
-        col_cond1, col_cond2, col_cond3 = st.columns(3)
-        sel_proc = col_cond1.selectbox("1. Process (공종)", ["[상관없음/전체]"] + proc_names)
-        sel_ground = col_cond2.selectbox("2. Ground (지반)", ["[상관없음/전체]"] + ground_names)
-        sel_loc = col_cond3.selectbox("3. Location (위치)", ["[상관없음/전체]"] + loc_names)
-        
-        col_cond4, col_cond5 = st.columns(2)
-        sel_method = col_cond4.selectbox("4. Method (공법)", ["[상관없음/전체]"] + method_names)
-        sel_equip = col_cond5.selectbox("5. Equipment (장비)", ["[상관없음/전체]"] + equip_names)
+        # 데스크톱에서는 5단 가로 배치, 모바일에서는 자동 세로 배치
+        col_cond1, col_cond2, col_cond3, col_cond4, col_cond5 = st.columns(5)
+        sel_proc = col_cond1.selectbox("1. 공종", ["[상관없음/전체]"] + proc_names)
+        sel_ground = col_cond2.selectbox("2. 지반", ["[상관없음/전체]"] + ground_names)
+        sel_loc = col_cond3.selectbox("3. 위치", ["[상관없음/전체]"] + loc_names)
+        sel_method = col_cond4.selectbox("4. 공법", ["[상관없음/전체]"] + method_names)
+        sel_equip = col_cond5.selectbox("5. 장비", ["[상관없음/전체]"] + equip_names)
         
         user_query = st.text_area(
             "💬 Semantic Search (자유 형식 자연어 검색)", 
