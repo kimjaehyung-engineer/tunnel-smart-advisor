@@ -270,12 +270,15 @@ try:
                 matched_tags = " | ".join(risk_matches[r_id])
                 
                 st.markdown(f'''
-                    <div class="core-risk-box" style="width: 100%;">
-                        <div class="core-risk-title">
-                            🚨 {r_desc} 
-                            <span style="font-size: 0.85rem; color: #e11d48; border: 1px solid #e11d48; padding: 2px 6px; border-radius: 4px; margin-left: 10px; font-weight: normal; vertical-align: middle;">Score: {score}</span>
+                    <div class="core-risk-box" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                        <div style="flex: 1; padding-right: 20px;">
+                            <div class="core-risk-title" style="margin-bottom: 6px;">🚨 {r_desc}</div>
+                            <div class="core-risk-desc" style="margin: 0;">매칭 근거: {matched_tags}</div>
                         </div>
-                        <div class="core-risk-desc">매칭 근거: {matched_tags}</div>
+                        <div style="flex-shrink: 0; text-align: center; background: white; padding: 8px 16px; border-radius: 8px; border: 2px solid #e11d48; box-shadow: 0 2px 4px rgba(225,29,72,0.1);">
+                            <div style="font-size: 0.7rem; color: #e11d48; font-weight: 800; letter-spacing: 0.5px;">RISK SCORE</div>
+                            <div style="font-size: 1.4rem; color: #e11d48; font-weight: 900; line-height: 1.2;">{score}</div>
+                        </div>
                     </div>
                 ''', unsafe_allow_html=True)
                 
@@ -295,12 +298,15 @@ try:
                 matched_tags = " | ".join(risk_matches[r_id])
                 
                 st.markdown(f'''
-                    <div class="partial-risk-box" style="width: 100%;">
-                        <div class="partial-risk-title">
-                            🔸 {r_desc}
-                            <span style="font-size: 0.8rem; color: #ea580c; border: 1px solid #ea580c; padding: 2px 6px; border-radius: 4px; margin-left: 10px; font-weight: normal; vertical-align: middle;">Score: {score}</span>
+                    <div class="partial-risk-box" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                        <div style="flex: 1; padding-right: 20px;">
+                            <div class="partial-risk-title" style="margin-bottom: 4px;">🔸 {r_desc}</div>
+                            <div style="color: #64748b; font-size: 0.85rem; margin: 0;">매칭 근거: {matched_tags}</div>
                         </div>
-                        <div style="color: #64748b; font-size: 0.85rem;">매칭 근거: {matched_tags}</div>
+                        <div style="flex-shrink: 0; text-align: center; background: white; padding: 6px 12px; border-radius: 6px; border: 1px solid #ea580c;">
+                            <div style="font-size: 0.65rem; color: #ea580c; font-weight: 700; letter-spacing: 0.5px;">SCORE</div>
+                            <div style="font-size: 1.1rem; color: #ea580c; font-weight: 800; line-height: 1.2;">{score}</div>
+                        </div>
                     </div>
                 ''', unsafe_allow_html=True)
                 
