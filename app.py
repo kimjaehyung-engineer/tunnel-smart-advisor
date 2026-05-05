@@ -98,11 +98,17 @@ def inject_custom_css():
             margin-bottom: 0.4rem;
         }
         
-        /* 입력창(Selectbox, Textarea) 내부 텍스트 강제 검은색 지정 */
+        /* 입력창(Selectbox, Textarea) 내부 및 팝업 드롭다운 텍스트 강제 검은색 지정 */
         div[data-baseweb="select"] * {
             color: #0f172a !important;
         }
-        div[role="listbox"] * {
+        div[data-baseweb="popover"] * {
+            color: #0f172a !important;
+        }
+        ul[role="listbox"] * {
+            color: #0f172a !important;
+        }
+        li[role="option"] span {
             color: #0f172a !important;
         }
         textarea {
