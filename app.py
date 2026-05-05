@@ -317,6 +317,25 @@ try:
 
         # 3. 지식 그래프 (그 아래에 가로로 꽉 차게)
         st.markdown("### 🕸️ Knowledge Graph Topology")
+        
+        st.markdown('''
+            <div style="background-color: white; padding: 12px 16px; border-radius: 8px; margin-bottom: 12px; font-size: 0.85rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e2e8f0;">
+                <div style="font-weight: 700; margin-bottom: 8px; color: #1e293b;">📌 그래프 범례 (Legend)</div>
+                <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 8px; color: #475569;">
+                    <div style="display: flex; align-items: center; gap: 6px;"><div style="width: 12px; height: 12px; border-radius: 50%; background-color: #3b82f6;"></div> 기본 조건</div>
+                    <div style="display: flex; align-items: center; gap: 6px;"><div style="width: 12px; height: 12px; border-radius: 50%; background-color: #8b5cf6;"></div> 검색 조건</div>
+                    <div style="display: flex; align-items: center; gap: 6px;"><div style="width: 12px; height: 12px; border-radius: 50%; background-color: #ef4444;"></div> 최상위 위험</div>
+                    <div style="display: flex; align-items: center; gap: 6px;"><div style="width: 12px; height: 12px; border-radius: 50%; background-color: #f97316;"></div> 상위 위험</div>
+                    <div style="display: flex; align-items: center; gap: 6px;"><div style="width: 12px; height: 12px; border-radius: 50%; background-color: #eab308;"></div> 중위험</div>
+                    <div style="display: flex; align-items: center; gap: 6px;"><div style="width: 12px; height: 12px; border-radius: 50%; background-color: #22c55e;"></div> 저위험</div>
+                    <div style="display: flex; align-items: center; gap: 6px;"><div style="width: 12px; height: 12px; border-radius: 50%; background-color: #10b981;"></div> 대응 대책</div>
+                </div>
+                <div style="display: flex; flex-wrap: wrap; gap: 16px; border-top: 1px solid #e2e8f0; padding-top: 8px; color: #475569;">
+                    <div style="display: flex; align-items: center; gap: 6px;"><div style="width: 20px; height: 4px; background-color: #94a3b8; border-radius: 2px;"></div> 위험의 원인/연관 (RELATES_TO)</div>
+                    <div style="display: flex; align-items: center; gap: 6px;"><div style="width: 20px; height: 4px; background-color: #6ee7b7; border-radius: 2px;"></div> 위험의 해결/저감 (MITIGATED)</div>
+                </div>
+            </div>
+        ''', unsafe_allow_html=True)
             
         net = Network(height='500px', width='100%', bgcolor='#f8fafc', font_color='#0f172a')
         # 물리 엔진 부드럽게 조정
