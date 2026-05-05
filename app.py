@@ -7,11 +7,118 @@ import re
 from collections import defaultdict
 
 # 웹 페이지 기본 설정
-st.set_page_config(page_title="터널 스마트 어드바이저 v6 (자연어 검색 지원)", layout="wide", page_icon="🚇")
+st.set_page_config(page_title="Tunnel Smart Advisor", layout="wide", page_icon="🏗️", initial_sidebar_state="expanded")
+
+def inject_custom_css():
+    st.markdown("""
+        <style>
+        /* 프리미엄 폰트 적용 (Pretendard) */
+        @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css");
+        
+        html, body, [class*="css"] {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif !important;
+        }
+        
+        /* 거슬리는 기본 UI 요소 숨기기 */
+        #MainMenu {visibility: hidden;}
+        footer {visibility: hidden;}
+        header {visibility: hidden;}
+        
+        /* 메인 컨테이너 최적화 */
+        .block-container {
+            padding-top: 2rem !important;
+            padding-bottom: 2rem !important;
+            max-width: 1400px;
+        }
+        
+        /* 타이틀 스타일링 */
+        .main-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #0f172a;
+            letter-spacing: -1px;
+            margin-bottom: 0.2rem;
+        }
+        .sub-title {
+            font-size: 1.1rem;
+            color: #64748b;
+            margin-bottom: 2rem;
+            font-weight: 400;
+        }
+        
+        /* 사이드바 프리미엄 다크 모드 */
+        [data-testid="stSidebar"] {
+            background-color: #0f172a;
+            border-right: 1px solid #1e293b;
+        }
+        [data-testid="stSidebar"] * {
+            color: #f8fafc !important;
+        }
+        
+        /* 사이드바 구분선 */
+        hr {
+            border-color: #334155 !important;
+        }
+        
+        /* 메트릭(통계) 카드 디자인 */
+        [data-testid="stMetric"] {
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1.2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            transition: transform 0.2s ease;
+        }
+        [data-testid="stMetric"]:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* 완벽 매칭 핵심 리스크 커스텀 박스 */
+        .core-risk-box {
+            background-color: #fff1f2;
+            border-left: 5px solid #e11d48;
+            padding: 1.2rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            margin-top: 1rem;
+            box-shadow: 0 1px 3px 0 rgba(0,0,0,0.05);
+        }
+        .core-risk-title {
+            color: #be123c;
+            font-weight: 700;
+            font-size: 1.15rem;
+            margin-bottom: 0.4rem;
+        }
+        .core-risk-desc {
+            color: #881337;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        /* 부분 매칭 일반 박스 */
+        .partial-risk-box {
+            background-color: #f8fafc;
+            border-left: 5px solid #cbd5e1;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            margin-top: 1rem;
+        }
+        .partial-risk-title {
+            color: #334155;
+            font-weight: 600;
+            font-size: 1.05rem;
+            margin-bottom: 0.4rem;
+        }
+        
+        </style>
+    """, unsafe_allow_html=True)
+
+inject_custom_css()
 
 @st.cache_data
 def load_data():
-    # 상대 경로로 변경 (GitHub 배포 시 경로 오류 방지)
     base_path = os.path.join(os.path.dirname(__file__), '터널표준체크리스트')
     df_ground = pd.read_csv(os.path.join(base_path, 'nodes_ground.csv'))
     df_method = pd.read_csv(os.path.join(base_path, 'nodes_method.csv'))
@@ -26,34 +133,33 @@ def load_data():
 def natural_sort_key(s):
     return [int(text) if text.isdigit() else text.lower() for text in re.split(r'(\d+)', str(s))]
 
-st.title("🚇 터널 엔지니어링 스마트 어드바이저 (자연어 검색 & 지식 그래프)")
-st.markdown("드롭다운으로 조건을 선택하거나, **채팅하듯 현장 상황을 글로 적어보세요.** AI가 텍스트를 분석하여 맞춤형 리스크와 대책, 지식 그래프를 띄워줍니다.")
+st.markdown('<div class="main-title">Tunnel Engineering Smart Advisor</div>', unsafe_allow_html=True)
+st.markdown('<div class="sub-title">AI-Powered Risk Intelligence & Knowledge Graph for Tunnel Construction</div>', unsafe_allow_html=True)
 
 try:
     df_ground, df_method, df_equip, df_risk, df_proc, df_loc, df_strat, df_rels = load_data()
     
-    st.sidebar.header("🔍 복합 현장 조건 세팅")
+    st.sidebar.markdown("### 🔍 Site Conditions (현장 조건)")
     
     proc_names = sorted(df_proc['name'].dropna().tolist(), key=natural_sort_key)
     ground_names = sorted(df_ground['condition_name'].dropna().tolist(), key=natural_sort_key)
     loc_names = sorted(df_loc['loc_name'].dropna().tolist(), key=natural_sort_key)
     
-    sel_proc = st.sidebar.selectbox("1. 공종 (Process)", ["[상관없음/전체]"] + proc_names)
-    sel_ground = st.sidebar.selectbox("2. 지반 조건 (Ground)", ["[상관없음/전체]"] + ground_names)
-    sel_loc = st.sidebar.selectbox("3. 현장 위치 (Location)", ["[상관없음/전체]"] + loc_names)
+    sel_proc = st.sidebar.selectbox("1. Process (공종)", ["[상관없음/전체]"] + proc_names)
+    sel_ground = st.sidebar.selectbox("2. Ground (지반)", ["[상관없음/전체]"] + ground_names)
+    sel_loc = st.sidebar.selectbox("3. Location (위치)", ["[상관없음/전체]"] + loc_names)
     
     st.sidebar.markdown("---")
-    st.sidebar.subheader("💬 AI 자연어 현장 검색")
+    st.sidebar.markdown("### 💬 Semantic Search (자연어 검색)")
     user_query = st.sidebar.text_area(
-        "현장 여건이나 궁금한 점을 자유롭게 적어보세요.", 
-        placeholder="예: 도심지 갱구부에서 굴착할 때 파쇄대를 만나면 어떻게 해?",
-        height=100
+        "AI 텍스트 분석 (자유 형식)", 
+        placeholder="현장 상황을 자유롭게 입력하세요. (예: 도심지 갱구부에서 굴착 중 파쇄대 조우 시 대책)",
+        height=120
     )
     
-    # 랭킹 점수 계산 초기화
     risk_scores = defaultdict(float)
     risk_matches = defaultdict(list)
-    target_nodes = {} # t_id : (t_label, t_color)
+    target_nodes = {}
     
     def apply_filter(node_id, node_label, color, rel_type):
         if node_id not in target_nodes:
@@ -64,47 +170,43 @@ try:
                 if node_label not in risk_matches[r_id]:
                     risk_matches[r_id].append(node_label)
                     
-    # 1. 드롭다운 필터 적용
+    # 드롭다운 필터 적용
     if sel_proc != "[상관없음/전체]":
         p_id = df_proc[df_proc['name'] == sel_proc]['id:ID'].values[0]
-        apply_filter(p_id, sel_proc, '#74b9ff', 'ENCOUNTERS')
+        apply_filter(p_id, sel_proc, '#3b82f6', 'ENCOUNTERS')
             
     if sel_ground != "[상관없음/전체]":
         g_id = df_ground[df_ground['condition_name'] == sel_ground]['id:ID'].values[0]
-        apply_filter(g_id, sel_ground, '#74b9ff', 'TRIGGER')
+        apply_filter(g_id, sel_ground, '#3b82f6', 'TRIGGER')
             
     if sel_loc != "[상관없음/전체]":
         l_id = df_loc[df_loc['loc_name'] == sel_loc]['id:ID'].values[0]
-        apply_filter(l_id, sel_loc, '#74b9ff', 'OCCURS_AT')
+        apply_filter(l_id, sel_loc, '#3b82f6', 'OCCURS_AT')
 
-    # 2. 자연어 검색 필터 (키워드 추출 및 시맨틱 매칭)
+    # 자연어 필터 적용
     if user_query:
         query_words = [w for w in re.split(r'\W+', user_query) if len(w) >= 2]
         
-        # 공종 키워드 매칭
         for _, row in df_proc.dropna(subset=['name']).iterrows():
             name = row['name']
             clean = re.sub(r'^\d+\.\s*', '', name)
             for cw in clean.split():
                 if len(cw) >= 2 and cw in user_query:
-                    apply_filter(row['id:ID'], name, '#a29bfe', 'ENCOUNTERS')
+                    apply_filter(row['id:ID'], name, '#8b5cf6', 'ENCOUNTERS')
                     break
                     
-        # 지반 키워드 매칭
         for _, row in df_ground.dropna(subset=['condition_name']).iterrows():
             name = row['condition_name']
             if name in user_query or (len(name)>=2 and name[:2] in user_query):
-                apply_filter(row['id:ID'], name, '#a29bfe', 'TRIGGER')
+                apply_filter(row['id:ID'], name, '#8b5cf6', 'TRIGGER')
                 
-        # 위치 키워드 매칭
         for _, row in df_loc.dropna(subset=['loc_name']).iterrows():
             name = row['loc_name']
             for cw in name.split():
                 if len(cw) >= 2 and cw in user_query:
-                    apply_filter(row['id:ID'], name, '#a29bfe', 'OCCURS_AT')
+                    apply_filter(row['id:ID'], name, '#8b5cf6', 'OCCURS_AT')
                     break
                     
-        # 질문 내용 자체를 리스크 설명과 직접 비교 (가중치 0.5)
         for _, row in df_risk.dropna(subset=['description']).iterrows():
             r_id = row['id:ID']
             desc = row['description']
@@ -115,89 +217,104 @@ try:
                         risk_matches[r_id].append("자연어 내용 매칭")
 
     if not risk_scores:
-        st.info("👈 좌측 사이드바에서 조건을 선택하거나, 자연어로 자유롭게 질문해 보세요!")
+        st.info("👈 좌측 패널에서 현장 조건을 세팅하거나 질문을 입력하여 분석을 시작하세요.")
     else:
-        # 점수 순 내림차순 정렬
         sorted_risks = sorted(risk_scores.items(), key=lambda x: x[1], reverse=True)
         max_score = sorted_risks[0][1] if sorted_risks else 0
         
-        # 완벽 매칭(핵심)과 부분 매칭 분리: 이제 최고 점수가 무조건 핵심 리스크!
         perfect_matches = [(r_id, s) for r_id, s in sorted_risks if s == max_score]
         partial_matches = [(r_id, s) for r_id, s in sorted_risks if s < max_score]
         
-        st.subheader(f"🎯 AI 지능형 매칭 분석 결과")
+        # 대시보드 메트릭 출력
+        col1, col2, col3 = st.columns(3)
+        col1.metric("총 식별된 위험 요소 (Risks Found)", f"{len(sorted_risks)} 건")
+        col2.metric("최상위 핵심 위험 (Critical)", f"{len(perfect_matches)} 건")
+        col3.metric("알고리즘 최고 매칭률", f"{max_score} Score")
         
-        # 1. 완벽 매칭 핵심 리스크 UI (붉은색 강조)
-        if perfect_matches:
-            st.markdown("### 🔥 :red[가장 연관성이 높은 핵심 리스크 (최고 점수)]")
-            for r_id, score in perfect_matches[:10]:
-                r_desc = df_risk[df_risk['id:ID'] == r_id]['description'].values[0]
-                matched_tags = " + ".join(risk_matches[r_id])
-                
-                st.error(f"🚨 **{r_desc}** (매칭 근거: {matched_tags})")
-                
-                with st.expander(f"↳ 🛠️ 핵심 리스크 해결 대책 보기"):
-                    strat_ids = df_rels[(df_rels[':START_ID'] == r_id) & (df_rels[':TYPE'] == 'MITIGATED_BY')][':END_ID'].tolist()
-                    strats = df_strat[df_strat['id:ID'].isin(strat_ids)]['action'].tolist()
-                    if strats:
-                        for s in strats:
-                            st.success(f"✅ {s}")
-                    else:
-                        st.warning("등록된 해결 대책이 없습니다.")
+        st.markdown("<br>", unsafe_allow_html=True)
         
-        # 2. 부분 매칭 리스크 UI
-        if partial_matches:
-            st.markdown("---")
-            st.markdown("### ⚠️ 부분 연관 리스크 (참고용)")
-            for r_id, score in partial_matches[:10]:
-                r_desc = df_risk[df_risk['id:ID'] == r_id]['description'].values[0]
-                matched_tags = " + ".join(risk_matches[r_id])
-                
-                with st.expander(f"🔸 {r_desc} (매칭 근거: {matched_tags})"):
-                    strat_ids = df_rels[(df_rels[':START_ID'] == r_id) & (df_rels[':TYPE'] == 'MITIGATED_BY')][':END_ID'].tolist()
-                    strats = df_strat[df_strat['id:ID'].isin(strat_ids)]['action'].tolist()
-                    if strats:
-                        for s in strats:
-                            st.info(f"✔️ {s}")
-                    else:
-                        st.warning("등록된 해결 대책이 없습니다.")
-
-        # 지식 그래프 시각화 
-        st.markdown("---")
-        st.subheader("🕸️ 연관 지식 그래프")
+        # UI 레이아웃 2단 분리 (좌: 리스크 리포트 / 우: 지식 그래프)
+        col_left, col_right = st.columns([1, 1.2], gap="large")
         
-        net = Network(height='500px', width='100%', bgcolor='#ffffff', font_color='black')
-        
-        # 조건 노드 렌더링
-        for t_id, (t_label, t_color) in target_nodes.items():
-            net.add_node(t_id, label="검색 조건", title=t_label, color=t_color, size=30)
-        
-        # 리스크 렌더링
-        for r_id, score in sorted_risks[:15]:
-            r_desc = df_risk[df_risk['id:ID'] == r_id]['description'].values[0]
+        with col_left:
+            st.markdown("### 📄 Risk Intelligence Report")
             
-            if score == max_score:
-                net.add_node(r_id, label="핵심 Risk!", title=r_desc, color='#ff4757', size=45)
-            else:
-                net.add_node(r_id, label="Risk", title=r_desc, color='#ffeaa7', size=20)
+            if perfect_matches:
+                for r_id, score in perfect_matches[:10]:
+                    r_desc = df_risk[df_risk['id:ID'] == r_id]['description'].values[0]
+                    matched_tags = " | ".join(risk_matches[r_id])
+                    
+                    st.markdown(f'''
+                        <div class="core-risk-box">
+                            <div class="core-risk-title">🚨 {r_desc}</div>
+                            <div class="core-risk-desc">매칭 근거: {matched_tags}</div>
+                        </div>
+                    ''', unsafe_allow_html=True)
+                    
+                    with st.expander("🛠️ 현장 설계 및 시공 대책 보기"):
+                        strat_ids = df_rels[(df_rels[':START_ID'] == r_id) & (df_rels[':TYPE'] == 'MITIGATED_BY')][':END_ID'].tolist()
+                        strats = df_strat[df_strat['id:ID'].isin(strat_ids)]['action'].tolist()
+                        if strats:
+                            for s in strats:
+                                st.markdown(f"- {s}")
+                        else:
+                            st.write("등록된 세부 대책 데이터가 없습니다.")
             
-            # 조건 -> 리스크 엣지 연결
-            for t_id, (t_label, _) in target_nodes.items():
-                if t_label in risk_matches[r_id]:
-                    edge_width = 3 if score == max_score else 1
-                    net.add_edge(t_id, r_id, title="MATCHED", width=edge_width)
-                
-            # 리스크 -> 대책 엣지 연결 (핵심 리스크 위주)
-            if score == max_score:
-                strat_ids = df_rels[(df_rels[':START_ID'] == r_id) & (df_rels[':TYPE'] == 'MITIGATED_BY')][':END_ID'].tolist()
-                for s_id in strat_ids[:3]: 
-                    s_label = df_strat[df_strat['id:ID'] == s_id]['action'].values[0]
-                    net.add_node(s_id, label="Strategy", title=s_label, color='#2ed573', size=15)
-                    net.add_edge(r_id, s_id, title="MITIGATED")
+            if partial_matches:
+                st.markdown("<br>#### ⚠️ 참고 위험 요소 (Partial Match)", unsafe_allow_html=True)
+                for r_id, score in partial_matches[:5]:
+                    r_desc = df_risk[df_risk['id:ID'] == r_id]['description'].values[0]
+                    matched_tags = " | ".join(risk_matches[r_id])
+                    
+                    st.markdown(f'''
+                        <div class="partial-risk-box">
+                            <div class="partial-risk-title">🔸 {r_desc}</div>
+                            <div style="color: #64748b; font-size: 0.85rem;">매칭 근거: {matched_tags}</div>
+                        </div>
+                    ''', unsafe_allow_html=True)
+                    
+                    with st.expander("세부 대책 보기"):
+                        strat_ids = df_rels[(df_rels[':START_ID'] == r_id) & (df_rels[':TYPE'] == 'MITIGATED_BY')][':END_ID'].tolist()
+                        strats = df_strat[df_strat['id:ID'].isin(strat_ids)]['action'].tolist()
+                        if strats:
+                            for s in strats:
+                                st.markdown(f"- {s}")
+                        else:
+                            st.write("등록된 세부 대책 데이터가 없습니다.")
 
-        net.save_graph('temp_graph.html')
-        with open('temp_graph.html', 'r', encoding='utf-8') as f:
-            components.html(f.read(), height=520)
+        with col_right:
+            st.markdown("### 🕸️ Knowledge Graph Topology")
+            
+            net = Network(height='700px', width='100%', bgcolor='#f8fafc', font_color='#0f172a')
+            # 물리 엔진 부드럽게 조정
+            net.repulsion(node_distance=150, spring_length=200)
+            
+            for t_id, (t_label, t_color) in target_nodes.items():
+                net.add_node(t_id, label="Condition", title=t_label, color=t_color, size=35)
+            
+            for r_id, score in sorted_risks[:10]:
+                r_desc = df_risk[df_risk['id:ID'] == r_id]['description'].values[0]
+                
+                if score == max_score:
+                    net.add_node(r_id, label="Critical Risk", title=r_desc, color='#e11d48', size=45)
+                else:
+                    net.add_node(r_id, label="Risk", title=r_desc, color='#cbd5e1', size=25)
+                
+                for t_id, (t_label, _) in target_nodes.items():
+                    if t_label in risk_matches[r_id]:
+                        edge_width = 4 if score == max_score else 1
+                        net.add_edge(t_id, r_id, title="RELATES_TO", width=edge_width, color='#94a3b8')
+                    
+                if score == max_score:
+                    strat_ids = df_rels[(df_rels[':START_ID'] == r_id) & (df_rels[':TYPE'] == 'MITIGATED_BY')][':END_ID'].tolist()
+                    for s_id in strat_ids[:2]: 
+                        s_label = df_strat[df_strat['id:ID'] == s_id]['action'].values[0]
+                        net.add_node(s_id, label="Strategy", title=s_label, color='#10b981', size=20)
+                        net.add_edge(r_id, s_id, title="MITIGATED", color='#6ee7b7')
+
+            net.save_graph('temp_graph.html')
+            with open('temp_graph.html', 'r', encoding='utf-8') as f:
+                components.html(f.read(), height=720)
 
 except Exception as e:
-    st.error(f"오류가 발생했습니다: {e}")
+    st.error(f"데이터 처리 중 오류가 발생했습니다: {e}")
