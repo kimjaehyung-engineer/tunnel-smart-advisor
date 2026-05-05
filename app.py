@@ -143,24 +143,27 @@ st.markdown('<div class="sub-title">AI-Powered Risk Intelligence & Knowledge Gra
 try:
     df_ground, df_method, df_equip, df_risk, df_proc, df_loc, df_strat, df_rels = load_data()
     
-    st.sidebar.markdown("### 🔍 Site Conditions (현장 조건)")
-    
     proc_names = sorted(df_proc['name'].dropna().tolist(), key=natural_sort_key)
     ground_names = sorted(df_ground['condition_name'].dropna().tolist(), key=natural_sort_key)
     loc_names = sorted(df_loc['loc_name'].dropna().tolist(), key=natural_sort_key)
     
-    sel_proc = st.sidebar.selectbox("1. Process (공종)", ["[상관없음/전체]"] + proc_names)
-    sel_ground = st.sidebar.selectbox("2. Ground (지반)", ["[상관없음/전체]"] + ground_names)
-    sel_loc = st.sidebar.selectbox("3. Location (위치)", ["[상관없음/전체]"] + loc_names)
-    
-    st.sidebar.markdown("---")
-    st.sidebar.markdown("### 💬 Semantic Search (자연어 검색)")
-    user_query = st.sidebar.text_area(
-        "AI 텍스트 분석 (자유 형식)", 
-        placeholder="현장 상황을 자유롭게 입력하세요. (예: 도심지 갱구부에서 굴착 중 파쇄대 조우 시 대책)",
-        height=120
-    )
-    go_clicked = st.sidebar.button("🚀 GO (분석 실행)", use_container_width=True)
+    with st.container():
+        st.markdown("### 🔍 AI 현장 조건 및 텍스트 분석기")
+        
+        # 데스크톱에서는 3단 가로 배치, 모바일에서는 자동 세로 배치
+        col_cond1, col_cond2, col_cond3 = st.columns(3)
+        sel_proc = col_cond1.selectbox("1. Process (공종)", ["[상관없음/전체]"] + proc_names)
+        sel_ground = col_cond2.selectbox("2. Ground (지반)", ["[상관없음/전체]"] + ground_names)
+        sel_loc = col_cond3.selectbox("3. Location (위치)", ["[상관없음/전체]"] + loc_names)
+        
+        user_query = st.text_area(
+            "💬 Semantic Search (자유 형식 자연어 검색)", 
+            placeholder="현장 상황을 자유롭게 입력하세요. (예: 도심지 갱구부에서 굴착 중 파쇄대 조우 시 대책)",
+            height=100
+        )
+        go_clicked = st.button("🚀 GO (분석 실행)", use_container_width=True)
+        
+    st.markdown("---")
     
     risk_scores = defaultdict(float)
     risk_matches = defaultdict(list)
