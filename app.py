@@ -271,7 +271,10 @@ try:
                 
                 st.markdown(f'''
                     <div class="core-risk-box" style="width: 100%;">
-                        <div class="core-risk-title">🚨 {r_desc}</div>
+                        <div class="core-risk-title">
+                            🚨 {r_desc} 
+                            <span style="font-size: 0.85rem; color: #e11d48; border: 1px solid #e11d48; padding: 2px 6px; border-radius: 4px; margin-left: 10px; font-weight: normal; vertical-align: middle;">Score: {score}</span>
+                        </div>
                         <div class="core-risk-desc">매칭 근거: {matched_tags}</div>
                     </div>
                 ''', unsafe_allow_html=True)
@@ -293,7 +296,10 @@ try:
                 
                 st.markdown(f'''
                     <div class="partial-risk-box" style="width: 100%;">
-                        <div class="partial-risk-title">🔸 {r_desc}</div>
+                        <div class="partial-risk-title">
+                            🔸 {r_desc}
+                            <span style="font-size: 0.8rem; color: #ea580c; border: 1px solid #ea580c; padding: 2px 6px; border-radius: 4px; margin-left: 10px; font-weight: normal; vertical-align: middle;">Score: {score}</span>
+                        </div>
                         <div style="color: #64748b; font-size: 0.85rem;">매칭 근거: {matched_tags}</div>
                     </div>
                 ''', unsafe_allow_html=True)
