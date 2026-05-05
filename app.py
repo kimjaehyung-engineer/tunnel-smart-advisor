@@ -240,7 +240,7 @@ try:
         col2.metric("최상위 핵심 위험 (Critical)", f"{len(perfect_matches)} 건")
         col3.metric("최고 위험도 스코어 (Max Risk Score)", f"{max_score} 점")
         
-        st.caption("ℹ️ **최고 위험도 스코어란?** 선택한 현장 조건 및 검색 키워드와의 최대 일치(중복) 건수를 의미합니다. 점수가 높을수록 현재 현장 상황에 가장 부합하는 핵심 위험 요소입니다.")
+        st.caption("ℹ️ **최고 위험도 스코어란?** 선택한 현장 조건 및 검색 키워드와의 최대 일치(중복) 건수를 의미합니다. *(ex. 현장조건 1개 일치 = +1.0점, 자연어 키워드 1개 포함 = +0.5점)*")
         
         st.markdown("<br>", unsafe_allow_html=True)
         
