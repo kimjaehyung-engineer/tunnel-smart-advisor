@@ -98,18 +98,19 @@ def inject_custom_css():
             margin-bottom: 0.4rem;
         }
         
-        /* 입력창(Selectbox, Textarea) 내부 및 팝업 드롭다운 텍스트 강제 지정 */
+        /* 닫혀있는 Selectbox의 텍스트 (배경이 네이비이므로 흰색) */
         div[data-baseweb="select"] * {
             color: #ffffff !important;
         }
+        /* 펼쳐진 드롭다운 리스트의 텍스트 (배경이 흰색이므로 네이비) */
         div[data-baseweb="popover"] * {
-            color: #ffffff !important;
+            color: #0f172a !important;
         }
         ul[role="listbox"] * {
-            color: #ffffff !important;
+            color: #0f172a !important;
         }
         li[role="option"] span {
-            color: #ffffff !important;
+            color: #0f172a !important;
         }
         textarea {
             color: #0f172a !important;
