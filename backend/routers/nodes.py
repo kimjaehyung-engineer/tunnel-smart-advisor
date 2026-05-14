@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from ..services.data_loader import load_data
 from ..services.risk_scoring import natural_sort_key
 
@@ -21,16 +21,15 @@ def get_nodes(node_type: str):
     }
     name_key = key_map.get(node_type)
     if not name_key:
-        return {"error": f"Unknown node type: {node_type}"}
+        raise HTTPException(status_code=404, detail=f"Unknown node type: {node_type}")
 
     data = load_data()
     df = data.get(node_type)
     if df is None:
-        return {"error": f"No such node type: {node_type}"}, 404
+        raise HTTPException(status_code=404, detail=f"No such node type: {node_type}")
 
-    rows = (
-        df.dropna(subset=[name_key])
-        .sort_values(by=name_key, key=natural_sort_key)
-        .to_dict(orient="records")
+    rows = sorted(
+        df.dropna(subset=[name_key]).to_dict(orient="records"),
+        key=lambda row: natural_sort_key(row.get(name_key, "")),
     )
     return {"nodes": rows, "type": node_type}

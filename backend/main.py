@@ -15,6 +15,15 @@ app.add_middleware(
 app.include_router(nodes.router)
 app.include_router(score.router)
 
+@app.get("/")
+def root():
+    return {
+        "name": "Tunnel Smart Advisor API",
+        "status": "ok",
+        "docs": "/docs",
+        "health": "/health",
+    }
+
 @app.get("/health")
 def health():
     return {"status": "ok"}
