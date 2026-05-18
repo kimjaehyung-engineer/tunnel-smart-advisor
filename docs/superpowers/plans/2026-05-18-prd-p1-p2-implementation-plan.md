@@ -836,6 +836,24 @@ P0 is complete through `docs/superpowers/plans/2026-05-18-prd-p0-implementation-
 
 ---
 
+## Slice 39: P2-2 Lesson Learned Relation Validation
+
+**Status:** Completed on 2026-05-18.
+
+**Goal:** Validate the Lesson Learned seed relationships loaded for Library search/detail so broken `LEARNED_AS` edges fail during ontology validation.
+
+**Files:**
+- Modify: `scripts/tools/validate_ontology.py`
+- Test: `tests/backend/test_ontology_validation.py`
+
+- [x] Load `LESSON_RELS_FILE` during validation.
+- [x] Require at least one `LEARNED_AS` row in the lesson relationship seed.
+- [x] Validate `LEARNED_AS` start IDs against canonical Risk IDs and supported `Risk_1`/`Risk_001` aliases.
+- [x] Validate `LEARNED_AS` end IDs against Lesson Learned node IDs.
+- [x] Add focused tests for unknown lesson rejection and Risk alias acceptance.
+
+---
+
 ## Full Verification Gate
 
 Run after every completed slice:
