@@ -1,0 +1,11 @@
+{
+  "name": "tunnel-smart-advisor",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev:all": "powershell -ExecutionPolicy Bypass -File scripts/dev.ps1 -Restart",
+    "dev:all:no-browser": "powershell -ExecutionPolicy Bypass -File scripts/dev.ps1 -Restart -NoBrowser",
+    "dev:stop": "powershell -ExecutionPolicy Bypass -File scripts/dev.ps1 -Stop"
+  },
+  "dependencies": {}
+}

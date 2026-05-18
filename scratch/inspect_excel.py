@@ -1,7 +1,9 @@
 import pandas as pd
 import os
+from pathlib import Path
 
-file_path = r'c:\Users\sskjh\OneDrive\문서\antigravity\온톨로지\터널표준체크리스트\터널(NATM)표춘체크리스(26년4월 13일) (2).xlsx'
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+file_path = PROJECT_ROOT / 'data' / 'tunnel_checklist' / '터널(NATM)표춘체크리스(26년4월 13일) (2).xlsx'
 
 try:
     xl = pd.ExcelFile(file_path)
