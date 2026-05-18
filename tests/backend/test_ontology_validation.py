@@ -3,7 +3,7 @@ import json
 import pytest
 import pandas as pd
 
-from scripts.tools.validate_ontology import assert_allowed_relation_types, assert_numeric_columns, assert_ontology_version_metadata, assert_required_values, assert_strategy_targets_exist
+from scripts.tools.validate_ontology import assert_allowed_relation_types, assert_lesson_relations_valid, assert_numeric_columns, assert_ontology_version_metadata, assert_required_values, assert_strategy_targets_exist
 
 
 def test_ontology_version_metadata_requires_source_hash(tmp_path) -> None:
@@ -140,3 +140,20 @@ def test_strategy_target_validation_accepts_existing_risk() -> None:
     risks = pd.DataFrame({"id:ID": ["Risk_001"]})
 
     assert_strategy_targets_exist(strategies, risks)
+
+
+def test_lesson_relation_validation_rejects_unknown_lesson() -> None:
+    lesson_rels = pd.DataFrame({":START_ID": ["Risk_1"], ":END_ID": ["Lesson_DOES_NOT_EXIST"], ":TYPE": ["LEARNED_AS"]})
+    lessons = pd.DataFrame({"id:ID": ["Lesson_1"]})
+    risks = pd.DataFrame({"id:ID": ["Risk_001"]})
+
+    with pytest.raises(ValueError, match="Lesson_DOES_NOT_EXIST"):
+        assert_lesson_relations_valid(lesson_rels, lessons, risks)
+
+
+def test_lesson_relation_validation_accepts_risk_aliases() -> None:
+    lesson_rels = pd.DataFrame({":START_ID": ["Risk_1"], ":END_ID": ["Lesson_1"], ":TYPE": ["LEARNED_AS"]})
+    lessons = pd.DataFrame({"id:ID": ["Lesson_1"]})
+    risks = pd.DataFrame({"id:ID": ["Risk_001"]})
+
+    assert_lesson_relations_valid(lesson_rels, lessons, risks)

@@ -10,7 +10,7 @@ ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from backend.config import DATA_DIR, NODE_FILES, ONTOLOGY_VERSION_FILE, RELS_FILE
+from backend.config import DATA_DIR, LESSON_RELS_FILE, NODE_FILES, ONTOLOGY_VERSION_FILE, RELS_FILE
 
 
 REQUIRED_COLUMNS: dict[str, set[str]] = {
@@ -156,12 +156,41 @@ def assert_strategy_targets_exist(strategies: pd.DataFrame, risks: pd.DataFrame)
         raise ValueError(f"Strategy target_risk values reference unknown risks: {', '.join(missing_targets[:10])}")
 
 
+def risk_id_aliases(risks: pd.DataFrame) -> set[str]:
+    aliases: set[str] = set()
+    for risk_id in risks["id:ID"].dropna().astype(str).tolist():
+        aliases.add(risk_id)
+        if risk_id.startswith("Risk_"):
+            suffix = risk_id.removeprefix("Risk_")
+            if suffix.isdigit():
+                aliases.add(f"Risk_{int(suffix)}")
+                aliases.add(f"Risk_{int(suffix):03d}")
+    return aliases
+
+
+def assert_lesson_relations_valid(lesson_rels: pd.DataFrame, lessons: pd.DataFrame, risks: pd.DataFrame) -> None:
+    learned_rows = lesson_rels[lesson_rels[":TYPE"] == "LEARNED_AS"]
+    if learned_rows.empty:
+        raise ValueError("Lesson relationship seed has no LEARNED_AS rows")
+    known_risks = risk_id_aliases(risks)
+    known_lessons = set(lessons["id:ID"].dropna().astype(str).tolist())
+    learned_start_ids = pd.Series(learned_rows[":START_ID"])
+    missing_risks = sorted(set(learned_start_ids.dropna().astype(str).tolist()) - known_risks)
+    if missing_risks:
+        raise ValueError(f"LEARNED_AS relationships reference unknown risks: {', '.join(missing_risks[:10])}")
+    learned_end_ids = pd.Series(learned_rows[":END_ID"])
+    missing_lessons = sorted(set(learned_end_ids.dropna().astype(str).tolist()) - known_lessons)
+    if missing_lessons:
+        raise ValueError(f"LEARNED_AS relationships reference unknown lessons: {', '.join(missing_lessons[:10])}")
+
+
 def validate() -> dict[str, int]:
     assert_ontology_version_metadata()
     frames: dict[str, pd.DataFrame] = {}
     for name, path in NODE_FILES.items():
         frames[name] = read_csv(path)
     frames["rels"] = read_csv(RELS_FILE)
+    frames["lesson_rels"] = read_csv(LESSON_RELS_FILE)
 
     for name, frame in frames.items():
         if name in REQUIRED_COLUMNS:
@@ -173,7 +202,7 @@ def validate() -> dict[str, int]:
 
     node_ids = set()
     for name, frame in frames.items():
-        if name == "rels" or "id:ID" not in frame.columns:
+        if name in {"rels", "lesson_rels"} or "id:ID" not in frame.columns:
             continue
         node_ids.update(frame["id:ID"].dropna().astype(str).tolist())
 
@@ -184,6 +213,7 @@ def validate() -> dict[str, int]:
 
     rels = frames["rels"]
     assert_strategy_targets_exist(frames["strategy"], frames["risk"])
+    assert_lesson_relations_valid(frames["lesson_rels"], frames["lesson"], frames["risk"])
     assert_allowed_relation_types(rels)
     referenced_ids = set(rels[":START_ID"].dropna().astype(str).tolist()) | set(rels[":END_ID"].dropna().astype(str).tolist())
     missing_references = sorted(referenced_ids - node_ids)
