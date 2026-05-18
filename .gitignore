@@ -4,3 +4,9 @@ __pycache__/
 .env
 venv/
 env/
+frontend/node_modules/
+node_modules/
+frontend/dist/
+frontend/tsconfig.tsbuildinfo
+temp_graph.html
+data/runtime/

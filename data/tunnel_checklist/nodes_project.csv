@@ -1,0 +1,165 @@
+﻿id:ID,name,:LABEL
+Proj_001,평택 브레인시티 1단계,Project
+Proj_002,서울고덕강일지구 방음시설,Project
+Proj_003,안성구리 광역상수도 이설공사,Project
+Proj_004,화양전력구,Project
+Proj_005,양주회천 택지개발사업,Project
+Proj_006,김포-관산 도로,Project
+Proj_007,옥동-농소 도로,Project
+Proj_008,상주-영천 고속도로 1공구,Project
+Proj_009,노포북정 3공구,Project
+Proj_010,오남수동도로,Project
+Proj_011,새만금전주 6공구,Project
+Proj_012,수인선 2-2,Project
+Proj_013,새만금전주 5공구,Project
+Proj_014,진접선 3공구,Project
+Proj_015,삼성-동탄 2공구,Project
+Proj_016,평화의댐 치수,Project
+Proj_017,울릉도일주도로,Project
+Proj_018,부산명지 택지,Project
+Proj_019,서울고덕 강일,Project
+Proj_020,오남수동 도로,Project
+Proj_021,성남복정 택지,Project
+Proj_022,평택 화양지구,Project
+Proj_023,칠북-북면 도로,Project
+Proj_024,광양시 우회도로,Project
+Proj_025,여수시우회도로,Project
+Proj_026,칠북-북면간 도로,Project
+Proj_027,평화의댐 치수능력증대,Project
+Proj_028,서울지하철 923공구,Project
+Proj_029,안동댐비상여수로,Project
+Proj_030,부산외곽순환고속 9공구,Project
+Proj_031,웅동-장유 국도확장,Project
+Proj_032,인천공항철도연계시설확충,Project
+Proj_033,포승-평택철도 1공구,Project
+Proj_034,노포북정3공구,Project
+Proj_035,사상하단4공구,Project
+Proj_036,서해선 홍성-송산 5공구,Project
+Proj_037,서해선 홍성-송산 전철 5공구,Project
+Proj_038,김포도시철도 3공구,Project
+Proj_039,울산~포항 전철 2공구,Project
+Proj_040,동대구-영천전철 4공구,Project
+Proj_041,도담-영천전철 6공구,Project
+Proj_042,시흥장현지구 1공구,Project
+Proj_043,안성-구리고속 11공구,Project
+Proj_044,울릉도일주도로2,Project
+Proj_045,전주-남원1공구,Project
+Proj_046,울릉공항,Project
+Proj_047,충주댐치수능력증대,Project
+Proj_048,사상하단 4공구 등,Project
+Proj_049,사상하단/칠북-북면 등,Project
+Proj_050,울릉도일주/시흥장현 등,Project
+Proj_051,새만금-전주 7공구 등,Project
+Proj_052,진접선 3공구 등,Project
+Proj_053,포항시우회도로 등,Project
+Proj_054,오남수동도로 등,Project
+Proj_055,동대구-영천 4공구 등,Project
+Proj_056,칠북-북면 도로 등,Project
+Proj_057,칠북-북면/예천양수 등,Project
+Proj_058,서울지하철 923공구 등,Project
+Proj_059,칠북-북면 / 성남복정 등,Project
+Proj_060,터널 현장 공통,Project
+Proj_061,수원외곽 / 양주회천 등,Project
+Proj_062,고군산 2공구 / 영암-해남 등,Project
+Proj_063,광명전력구,Project
+Proj_064,GTX-A 6공구,Project
+Proj_065,인천공항철도연계,Project
+Proj_066,에코델타시티 2-1,Project
+Proj_067,삼성-동탄 GTX 2공구,Project
+Proj_068,수인선 2-2공구,Project
+Proj_069,일반 / 공통,Project
+Proj_070,시화하수처리장,Project
+Proj_071,평화의댐,Project
+Proj_072,평택항외곽호안,Project
+Proj_073,파주포천도로 2공구,Project
+Proj_074,"성남복정1, 2지구",Project
+Proj_075,고덕산단 1단계,Project
+Proj_076,일반 / 터널 공통,Project
+Proj_077,새만금전주 6,Project
+Proj_078,파주포천 2공구,Project
+Proj_079,새만금전주 5,Project
+Proj_080,대구도시철도 305공구,Project
+Proj_081,성남복정1·2 공공주택지구,Project
+Proj_082,송산그린시티 남측지구 3공구,Project
+Proj_083,일반 / 공통 (중봉터널),Project
+Proj_084,일반 / 공통 (철도지하철팀),Project
+Proj_085,파주-포천 2공구,Project
+Proj_086,도담-영천 6공구,Project
+Proj_087,삼성-동탄광역급행철도 2공구,Project
+Proj_088,동해선 10공구,Project
+Proj_089,하남선 복선전철 4공구,Project
+Proj_090,일반 / 공통 (중봉터널 L/L),Project
+Proj_091,중봉터널 / 공통,Project
+Proj_092,신림선 경전철 2공구,Project
+Proj_093,인천공항철도 서울역,Project
+Proj_094,평창슬라이딩센터,Project
+Proj_095,중봉터널 L/L / 공통,Project
+Proj_096,설계시공 하자 L/L,Project
+Proj_097,고덕산단폐수처리장 / 시흥 하수,Project
+Proj_098,일반 / 공통 (하자 L/L),Project
+Proj_099,일반 / 공통 (지하수 구간 리스크),Project
+Proj_100,안동댐 비상여수로 현장,Project
+Proj_101,서남물재생센터 현장,Project
+Proj_102,상주-영천고속 10공구,Project
+Proj_103,서남위생처리현대화 현장,Project
+Proj_104,서남위생현대화,Project
+Proj_105,서해선 복선전철 5공구,Project
+Proj_106,현장 공통 리스크,Project
+Proj_107,도담-영천전철 3공구,Project
+Proj_108,동대구-영천전철,Project
+Proj_109,도담-영천 6,Project
+Proj_110,인천검단지구(3-1) 터널,Project
+Proj_111,별내선,Project
+Proj_112,호남KTX,Project
+Proj_113,"도담-영천전철 3,6공구",Project
+Proj_114,동대구-영천 4공구,Project
+Proj_115,적금-영남 연육교,Project
+Proj_116,평화의 댐,Project
+Proj_117,파주-포천,Project
+Proj_118,삼성-동탄 2공구 등,Project
+Proj_119,포천-양수,Project
+Proj_120,한탄강댐/철도 공통,Project
+Proj_121,인천공항철도연계/923공구,Project
+Proj_122,울릉도일주2호 등,Project
+Proj_123,전주-남원1공구 등,Project
+Proj_124,GTX-A 6공구 등,Project
+Proj_125,일반 현장 공통,Project
+Proj_126,구조물 공통(L/L),Project
+Proj_127,적금-영남연육교 등,Project
+Proj_128,터널공사 공통(L/L),Project
+Proj_129,여수산단진입도로 등,Project
+Proj_130,한탄강댐(지하 갤러리),Project
+Proj_131,김포-관산 도로 등,Project
+Proj_132,평택 화양지구 등,Project
+Proj_133,부산명지 등,Project
+Proj_134,양주회천 택지조성 등,Project
+Proj_135,시화하수처리장 현장 등,Project
+Proj_136,울릉도일주도로 등,Project
+Proj_137,제주해군기지 등,Project
+Proj_138,서울제물포터널 2공구,Project
+Proj_139,관로공사 공통(L/L),Project
+Proj_140,포승-평택철도 등,Project
+Proj_141,"광명,금천 전력구",Project
+Proj_142,한탄강댐 현장,Project
+Proj_143,중봉터널,Project
+Proj_144,도담-영천,Project
+Proj_145,상주-영천 10공구 등,Project
+Proj_146,하자 L/L(철콘공사),Project
+Proj_147,새만금전주 6공구 등,Project
+Proj_148,파주-포천 2공구 등,Project
+Proj_149,공통(하자 L/L),Project
+Proj_150,평화의댐 치수능력증대 등,Project
+Proj_151,동해선 포항-삼척 10공구,Project
+Proj_152,충주댐 치수능력증대 등,Project
+Proj_153,부산지하철반송선 등,Project
+Proj_154,하자 L/L 공통,Project
+Proj_155,광양시우회도로 등,Project
+Proj_156,일반 터널 공통,Project
+Proj_157,장대 터널 공통,Project
+Proj_158,평화의댐 치수증대 등,Project
+Proj_159,한탄강댐/호남고속철도 등,Project
+Proj_160,한탄강댐/삼성-동탄 등,Project
+Proj_161,한탄강댐 등,Project
+Proj_162,파주-포천/새만금전주 등,Project
+Proj_163,부산외곽순환고속 9공구 등,Project
+Proj_164,인천교통 214공구 등,Project
